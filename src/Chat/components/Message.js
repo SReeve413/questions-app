@@ -10,7 +10,7 @@ class Message extends React.Component {
 
         return (
             <React.Fragment>
-                {this.props.message.user}: {this.props.message.message}
+                {this.props.message.user}: {this.props.message.text}
 
             </React.Fragment>
         )
