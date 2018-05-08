@@ -28,12 +28,21 @@ class MessageBox extends Component {
     onKeyUp(e){
         if(e.keyCode === 13 && trim(e.target.value) !== ''){
             e.preventDefault()
-            let dbCon = firebase.database().ref('/messages')
-            dbCon.push({
+            let dbCon = firebase.database().ref('/questions')
+            let newPostRef = dbCon.push({
                 text: trim(e.target.value),
                 user: this.props.props.profile.given_name,
-
+                email: this.props.props.profile.email,
+                users:{}
             })
+
+            let newPost = firebase.database().ref(`/questions/${newPostRef.key}/users`)
+           newPost.push({
+                user: this.props.props.profile.given_name,
+                email: this.props.props.profile.email,
+                answered: false
+            })
+
             this.setState({
                 text: ''
             })

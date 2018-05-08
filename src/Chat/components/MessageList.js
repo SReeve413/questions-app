@@ -3,7 +3,6 @@ import React from 'react'
 import firebase, {snapshotToArray} from '../../firebase.js'
 
 
-
 class MessageList extends React.Component {
 
     constructor(props) {
@@ -14,37 +13,31 @@ class MessageList extends React.Component {
             users: []
 
         }
-        this.removeMessage = this.removeMessage.bind(this)
+        this.removeQuestion = this.removeQuestion.bind(this)
         this.addUserToQuestionArray = this.addUserToQuestionArray.bind(this)
         this.updateUserToAnswered = this.updateUserToAnswered.bind(this)
 
     }
 
-
-
-    removeMessage(messageId) {
-        const messageRef = firebase.database().ref(`/messages/${messageId}`);
-        messageRef.remove()
+    removeQuestion(questionId) {
+        const questionsRef = firebase.database().ref(`/questions/${questionId}`);
+        questionsRef.remove()
     }
 
-    addUserToQuestionArray(messageId){
-        const messageRef = firebase.database().ref(`/messages/${messageId}/users`);
-        console.log(this.state.users.filter(name => name === this.props.props.profile.given_name).length);
-        console.log(this.props.props.profile.given_name);
-        console.log('test', this.state.messages[messageId]);
-
-
+    addUserToQuestionArray(questionId) {
+        const questionRef = firebase.database().ref(`/questions/${questionId}/users`);
         let userArray = [];
 
-        messageRef.on('value',function(snapshot) {
+        questionRef.on('value', function (snapshot) {
             userArray = snapshotToArray(snapshot);
         })
 
-        console.log(userArray)
-        if(userArray.filter(user => user.user === this.props.props.profile.given_name).length === 0){
+
+        if (userArray.filter(user => user.email === this.props.props.profile.email).length === 0) {
             console.log('user', userArray)
-            messageRef.push({
+            questionRef.push({
                 user: this.props.props.profile.given_name,
+                email: this.props.props.profile.email,
                 answered: false
 
             })
@@ -52,60 +45,43 @@ class MessageList extends React.Component {
         console.log(userArray)
     }
 
-    updateUserToAnswered(messageId){
-        const messageRef = firebase.database().ref(`/messages/${messageId}/users`);
+    updateUserToAnswered(questionId) {
+        const questionRef = firebase.database().ref(`/questions/${questionId}/users`);
 
         let userArray = [];
-
-        messageRef.on('value',function(snapshot) {
+        questionRef.on('value', function (snapshot) {
             userArray = snapshotToArray(snapshot);
         })
 
-        console.log(this.props.props.profile.given_name);
-        let [filteredArray] = userArray.filter(user => user.user === this.props.props.profile.given_name)
+        let [filteredArray] = userArray.filter(user => user.email === this.props.props.profile.email)
 
-        console.log(filteredArray);
-
-        if (filteredArray){
-            const userRef = firebase.database().ref(`/messages/${messageId}/users/${filteredArray.key}`);
+        if (filteredArray) {
+            const userRef = firebase.database().ref(`/questions/${questionId}/users/${filteredArray.key}`);
             userRef.update({"answered": true});
-
-
-
         }
-        // if(userArray.filter(user => user.user === this.props.props.profile.given_name).length === 0){
-        //     console.log('user', userArray)
-        //     messageRef.push({
-        //         user: this.props.props.profile.given_name,
-        //
-        //
-        //     })
-        // }
     }
-
-
 
     componentDidMount() {
 
-        const messagesRef = firebase.database().ref('messages');
+        const messagesRef = firebase.database().ref('questions');
         messagesRef.on('value', (snapshot) => {
-            let messages = snapshot.val();
+            let questions = snapshot.val();
             let newState = [];
             let newUsers = [];
 
-            for (let message in messages) {
-                for (let user in messages[message].users){
+            for (let question in questions) {
+                for (let user in questions[question].users) {
                     newUsers.push({
                         id: user,
-                        user: messages[message].users[user].user
+                        user: questions[question].users[user].user
                     })
 
                 }
 
                 newState.push({
-                    id: message,
-                    text: messages[message].text,
-                    user: messages[message].user,
+                    id: question,
+                    text: questions[question].text,
+                    user: questions[question].user,
                     users: newUsers
                 })
                 newUsers = [];
@@ -118,37 +94,30 @@ class MessageList extends React.Component {
 
     }
 
-
     render() {
-        // console.log('state', this.state)
-
         return (
             <React.Fragment>
                 <div>
 
-                    {this.state.messages.map((message) => {
+                    {this.state.messages.map((question) => {
                         return (
 
-                            <div key={message.id}>
+                            <div key={question.id}>
 
-                                {message.user === this.props.props.profile.given_name ?
-                                    <button onClick={() => this.removeMessage(message.id)}>Remove</button>
-                                    : <button onClick={() => this.addUserToQuestionArray(message.id)}> Same </button>}
+                                {question.user === this.props.props.profile.given_name ?
+                                    <button onClick={() => this.removeQuestion(question.id)}>Remove</button>
+                                    : <button onClick={() => this.addUserToQuestionArray(question.id)}> Same </button>}
 
                                 &nbsp;&nbsp;&nbsp;&nbsp;
-                                {message.user}: {message.text}
+                                {question.user}: {question.text}
                                 &nbsp;&nbsp;&nbsp;&nbsp;
 
-                                <button onClick={() => this.updateUserToAnswered(message.id)}>Ans</button>
-                                <button onClick={() => this.removeMessage(message.id)}>Remove Item</button>
-
-                                {/*{console.log('message',message)}*/}
-                                {/*{console.log('this', this)}*/}
-
+                                <button onClick={() => this.updateUserToAnswered(question.id)}>Ans</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button onClick={() => this.removeQuestion(question.id)}>Remove</button>
 
                             </div>
                         )
-
                     })}
 
                 </div>

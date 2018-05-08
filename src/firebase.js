@@ -7,7 +7,7 @@ const config = {
     storageBucket: "fir-chat-169e0.appspot.com",
     messagingSenderId: "489203017475"
 };
-firebase.initializeApp(config);
+const app = firebase.initializeApp(config);
 
 export const provider = new firebase.auth.GoogleAuthProvider()
 export const auth = firebase.auth()
@@ -23,4 +23,8 @@ export const snapshotToArray = (snapshot) => {
         returnArr.push(item)
     });
     return returnArr
+}
+
+export {
+    app
 }

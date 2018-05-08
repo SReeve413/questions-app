@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Panel, ControlLabel, Glyphicon} from 'react-bootstrap';
 import './Profile.css';
+import NewClassroom from '../Chat/components/NewClassroom'
 
 
 class Profile extends Component {
@@ -20,10 +21,10 @@ class Profile extends Component {
 
 
     render() {
-
         const {profile} = this.state;
         return (
             <div className="container">
+                <NewClassroom profile={profile}/>
 
                 <div className="profile-area">
                     <h1>{profile.name}</h1>
@@ -33,6 +34,7 @@ class Profile extends Component {
                             <ControlLabel><Glyphicon glyph="user"/> Nickname</ControlLabel>
                             <h3>{profile.nickname}</h3>
                         </div>
+
                         <pre>{JSON.stringify(profile, null, 2)}</pre>
                     </Panel>
                 </div>
