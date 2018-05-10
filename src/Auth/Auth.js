@@ -55,7 +55,7 @@ export default class Auth {
                 const updatedUser = await Rebase.push('users', { data: {
                         name: authResult.idTokenPayload.name,
                         email:authResult.idTokenPayload.email,
-                        sub:authResult.idTokenPayload.sub
+                        sub:authResult.idTokenPayload.sub,
                     }})
                 console.log(updatedUser);
 

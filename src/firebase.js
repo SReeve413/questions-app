@@ -12,7 +12,7 @@ const app = firebase.initializeApp(config);
 export const provider = new firebase.auth.GoogleAuthProvider()
 export const auth = firebase.auth()
 
-export default firebase
+export default !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
 
 export const snapshotToArray = (snapshot) => {
     let returnArr = []

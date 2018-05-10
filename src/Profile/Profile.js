@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Panel, ControlLabel, Glyphicon} from 'react-bootstrap';
 import './Profile.css';
 import NewClassroom from '../Chat/components/NewClassroom'
+import JoinClassroom from '../Chat/components/JoinClassroom'
 
 
 class Profile extends Component {
@@ -24,7 +25,10 @@ class Profile extends Component {
         const {profile} = this.state;
         return (
             <div className="container">
+
                 <NewClassroom profile={profile}/>
+
+                <JoinClassroom profile={profile}/>
 
                 <div className="profile-area">
                     <h1>{profile.name}</h1>
